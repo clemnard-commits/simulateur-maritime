@@ -227,9 +227,10 @@
 
 <div class="container">
     <h1>Simulateur réglementaire Affaires Maritimes</h1>
-    <p>Configurez les caractéristiques du navire pour identifier les règles de sécurité, les obligations d'estrin et l'impact du poids des batteries.</p>
+    <p>Configurez les caractéristiques du navire pour identifier la division exacte calculée et ses prescriptions de sécurité sur-mesure.</p>
     
     <div class="grid">
+        <!-- Usage -->
         <div class="form-group">
             <label for="usage">Usage / Activité principale</label>
             <select id="usage" onchange="calculerDivision()">
@@ -241,6 +242,7 @@
             </select>
         </div>
 
+        <!-- Zone de Navigation -->
         <div class="form-group">
             <label for="zone">Zone de navigation</label>
             <select id="zone" onchange="calculerDivision()">
@@ -249,6 +251,7 @@
             </select>
         </div>
 
+        <!-- Longueur -->
         <div class="form-group">
             <label for="longueur">Longueur du navire : <span id="longueur-val">15</span> m</label>
             <div class="slider-container">
@@ -256,11 +259,13 @@
             </div>
         </div>
 
+        <!-- Nombre de passagers -->
         <div class="form-group" id="group-passagers">
             <label for="passagers">Nombre de passagers à bord</label>
             <input type="number" id="passagers" value="25" min="0" oninput="calculerDivision()">
         </div>
 
+        <!-- Matériau de la coque -->
         <div class="form-group">
             <label for="coque">Matériau de la coque</label>
             <select id="coque" onchange="calculerDivision()">
@@ -269,6 +274,7 @@
             </select>
         </div>
 
+        <!-- Propulsion Électrique -->
         <div class="form-group">
             <label for="propulsion">Type de motorisation</label>
             <select id="propulsion" onchange="calculerDivision()">
@@ -277,6 +283,7 @@
             </select>
         </div>
 
+        <!-- BLOC DE CALCUL DE CAPACITÉ -->
         <div class="sub-grid" id="bloc-calculateur-batterie" style="display: none;">
             <h4>📐 Dimensionnement Électrique Estimatif (Standard LFP Marine : 100 Wh/kg)</h4>
             <div class="form-group">
@@ -290,18 +297,23 @@
         </div>
     </div>
 
+    <!-- Alerte Stabilité Critique (Division 211) -->
     <div class="alert-stability" id="alerte-stabilite">
         ⚠️ Alerte Stabilité Critique !
     </div>
 
+    <!-- Cadre de résultat principal -->
     <div class="result-box">
         <div class="result-title" id="div-titre">Division --</div>
         <p class="result-text" id="div-desc">Sélectionnez les options pour analyser le navire.</p>
     </div>
 
+    <!-- ZONE DE PRESCRIPTIONS TECHNIQUES ADAPTÉE AUX DIVISIONS CALCULÉES -->
     <div class="electric-specs" id="bloc-electrique">
-        </div>
+        <!-- Généré dynamiquement par JS -->
+    </div>
 
+    <!-- Liens de téléchargement officiels -->
     <div class="links-box">
         <h4>📂 Portails Officiels d'Accès à la Réglementation (Gouvernement Français)</h4>
         <p style="font-size: 0.9rem; margin-bottom: 15px; color: #475569;"><em>Note pour le client : Les URL des fichiers PDF individuels étant régulièrement modifiées par l'administration, utilisez les portails permanents ci-dessous pour télécharger les dernières versions à jour.</em></p>
@@ -336,7 +348,7 @@
         const blocCalculateur = document.getElementById('bloc-calculateur-batterie');
         const alerteStabilite = document.getElementById('alerte-stabilite');
 
-        // Visibilité du bloc passager
+        // Visibilité des éléments
         if (usage === 'passagers') {
             groupPassagers.style.opacity = "1";
             groupPassagers.style.pointerEvents = "auto";
@@ -345,7 +357,6 @@
             groupPassagers.style.pointerEvents = "none";
         }
 
-        // Visibilité du calculateur de batterie
         if (propulsion === 'electrique') {
             blocElectrique.style.display = "block";
             blocCalculateur.style.display = "grid";
@@ -355,178 +366,230 @@
             alerteStabilite.style.display = "none";
         }
 
-        // Calculs de base de l'énergie et du poids
+        // Calculs énergétiques généraux
         const capaciteKwh = Math.round((puissanceMoteur * autonomie) * 1.2);
         const poidsKg = capaciteKwh * 10;
         const poidsTonnes = poidsKg / 1000;
 
-        // Seuil générique pour l'alerte stabilité (Division 211)
+        // Seuil d'alerte Division 211 (Stabilité)
         let seuilCritiqueTonnes = 2.5;
-        if (longueur <= 12) seuilCritiqueTonnes = 1.2;
+        if (longueur <= 12) seuilCritiqueTonnes = 1.0;
         else if (longueur <= 16) seuilCritiqueTonnes = 2.5;
         else if (longueur <= 20) seuilCritiqueTonnes = 4.5;
         else if (longueur <= 24) seuilCritiqueTonnes = 7.0;
 
-        // --- CODE DE GÉNÉRATION DYNAMIQUE SELON L'USAGE ---
+        let divisionCalculee = "";
         let htmlContent = "";
 
-        // CAS 1 : USAGE PROFESSIONNEL / TRANSPORT DE PASSAGERS
+        // ==========================================
+        // MOTEUR LOGIQUE ET ARCHITECTURE DES PRESCRIPTIONS
+        // ==========================================
+
+        // BRANCHE 1 : TRANSPORT DE PASSAGERS
         if (usage === 'passagers') {
             if (passagers <= 12) {
                 titre.innerText = "Erreur (Max 12 passagers)";
                 desc.innerText = "Pour 12 passagers ou moins, l'homologation requise est la Division 241 (NUC) et non Navire à Passagers.";
-                blocElectrique.style.style.display = "none";
+                blocElectrique.style.display = "none";
                 blocCalculateur.style.display = "none";
                 alerteStabilite.style.display = "none";
                 return;
             }
 
             if (zone === 'internationale') {
+                divisionCalculee = "DIV_221";
                 titre.innerText = "Division 221 (SOLAS)";
-                desc.innerText = "Navire à passagers international.";
+                desc.innerText = "Navires à passagers effectuant des voyages internationaux.";
+            } else if (longueur >= 24) {
+                divisionCalculee = "DIV_223_GRAND";
+                titre.innerText = "Division 223";
+                desc.innerText = "Grands navires à passagers en navigation nationale (longueur ≥ 24 mètres).";
+            } else if (coque === 'acier') {
+                divisionCalculee = "DIV_223A";
+                titre.innerText = "Division 223a";
+                desc.innerText = "Navires à passagers nationaux de moins de 24 mètres construits en acier.";
             } else {
-                if (longueur >= 24) {
-                    titre.innerText = "Division 223";
-                    desc.innerText = "Grand navire à passagers national.";
-                } else {
-                    if (coque === 'acier') {
-                        titre.innerText = "Division 223a";
-                        desc.innerText = "Navire à passagers national de moins de 24 mètres en acier.";
-                    } else {
-                        titre.innerText = "Division 223b, 219-6 & 322";
-                        desc.innerText = "Navire à passagers national (< 24m, coque alu/composite/bois). Soumis aux contraintes de la Division 223b.";
-                        
-                        // Injection des specs Passagers 223b
-                        htmlContent = `
-                            <h3>⚡ Prescriptions Techniques Critiques (Divisions 223b, 219-6 &amp; 322)</h3>
-                            <h4>1. Bilan Énergétique Estimé</h4>
-                            <ul>
-                                <li><strong>Capacité Utile Minimale :</strong> <span class="badge-green">${capaciteKwh} kWh</span> (avec 20% de réserve technique).</li>
-                                <li><strong>Poids Net Estimé :</strong> <span class="badge-green">${poidsKg.toLocaleString()} kg (${poidsTonnes.toFixed(2)} t)</span>.</li>
-                            </ul>
-                            <h4>2. Certification et Sécurité Batteries (Division 219-6)</h4>
-                            <ul>
-                                <li><strong>Marine Type Approval :</strong> Agrément complet du bloc par un organisme notifié (Bureau Veritas, DNV ou RINA) obligatoire pour le transport public. Normes <span class="badge">CEI 62619</span> et <span class="badge">CEI 62281</span> requises.</li>
-                                <li><strong>BMS &amp; Alarme Passerelle :</strong> Le système de gestion de batterie doit envoyer un signal d'alerte sonore et visuel au pilote <em>avant</em> de couper l'alimentation pour surchauffe.</li>
-                            </ul>
-                            <h4>3. Cloisonnement et Extinction Incendie (Division 322)</h4>
-                            <ul>
-                                <li><strong>Local Batterie Dédié :</strong> Isolement coupe-feu de classe <span class="badge">A-60</span> obligatoire (60 min) par rapport aux zones passagers.</li>
-                                <li><strong>Extinction Fixe :</strong> Obligation d'un système automatique fixe (brouillard d'eau ou gaz) commandé depuis la passerelle. Extincteurs manuels refusés pour la validation du local.</li>
-                                <li><strong>Ventilation :</strong> Extraction mécanique indépendante vers l'extérieur pour évacuer les gaz de dégazage.</li>
-                            </ul>
-                            <h4>4. Contraintes d'Estrin &amp; Échouage</h4>
-                            <ul>
-                                <li><strong>Renfort Structurel :</strong> Les varangues et structures de fond doivent être échantillonnées pour supporter la charge lourde localisée des batteries lors de la mise sur estrin.</li>
-                            </ul>
-                        `;
-
-                        // Alerte Stabilité spécifique 223b
-                        if (poidsTonnes > seuilCritiqueTonnes && coque === 'autre') {
-                            alerteStabilite.style.display = "block";
-                            alerteStabilite.innerHTML = `<strong>⚠️ Alerte Division 211 (Stabilité critique - Passagers) :</strong> Le poids de vos batteries (${poidsTonnes.toFixed(2)} t) est trop élevé pour une coque légère de ${longueur}m. Une étude de stabilité avec essai de pesée et d'inclinaison sera exigée par le Centre de Sécurité des Navires (CSN).`;
-                        } else {
-                            alerteStabilite.style.display = "none";
-                        }
-                    }
-                }
+                divisionCalculee = "DIV_223B";
+                titre.innerText = "Division 223b, 219-6 & 322";
+                desc.innerText = "Navires à passagers nationaux de moins de 24 mètres en matériaux autres que l'acier (Alu/Composite).";
             }
         }
 
-        // CAS 2 : USAGE PLAISANCE PERSONNELLE (DIVISION 240)
-        else if (usage === 'plaisance_perso') {
-            titre.innerText = longueur < 24 ? "Division 240" : "Division 242";
-            desc.innerText = "Règlement général de la plaisance de loisir.";
-            alerteStabilite.style.style.display = "none";
-
-            htmlContent = `
-                <h3>⛵ Prescriptions Électriques Plaisance Privée (Division 240)</h3>
-                <h4>1. Bilan Énergétique Estimé</h4>
-                <ul>
-                    <li><strong>Capacité de stockage :</strong> <span class="badge-green">${capaciteKwh} kWh</span> / <strong>Poids estimé :</strong> <span class="badge-green">${poidsKg.toLocaleString()} kg</span>.</li>
-                </ul>
-                <h4>2. Exigences Électriques de Bord</h4>
-                <ul>
-                    <li><strong>Marquage CE :</strong> Contrairement aux navires de commerce, les batteries de plaisance ne nécessitent pas de certification lourde par Bureau Veritas, mais doivent obligatoirement posséder le marquage européen <span class="badge">CE</span> et respecter les normes de sécurité de construction de la directive plaisance.</li>
-                    <li><strong>Protection des circuits :</strong> Coupe-circuit bipolaire général obligatoire accessible rapidement. Fusibles ou disjoncteurs adaptés à chaque départ de ligne de puissance.</li>
-                </ul>
-                <h4>3. Ventilation et Compartimentage</h4>
-                <ul>
-                    <li><strong>Aération naturelle ou forcée :</strong> Les compartiments batteries doivent être ventilés de manière à éviter toute accumulation d'hydrogène ou de gaz de décharge, mais sans obligation de cloisons coupe-feu certifiées A-60 (sauf si la taille dépasse 24 mètres).</li>
-                </ul>
-            `;
-        }
-
-        // CAS 3 : USAGE PLAISANCE COMMERCIALE / CHARTER (DIVISION 241 - NUC)
-        else if (usage === 'plaisance_pro') {
-            titre.innerText = "Division 241 (Navire d'Utilisation Commerciale - NUC)";
-            desc.innerText = "Règlement applicable aux navires de plaisance loués avec skipper (limité à 12 passagers).";
-            alerteStabilite.style.style.display = "none";
-
-            htmlContent = `
-                <h3>💼 Obligations Techniques Plaisance Commerciale (Division 241 / NUC)</h3>
-                <h4>1. Stockage &amp; Sécurité Électrique</h4>
-                <ul>
-                    <li><strong>BMS de Sécurité Répertorié :</strong> Les parcs de batteries de propulsion au Lithium doivent disposer d'un BMS fiable coupant automatiquement la charge et la décharge en cas d'anomalie, avec indicateur de charge visible au poste de pilotage.</li>
-                    <li><strong>Coupure d'urgence :</strong> Un arrêt d'urgence "coup de poing" doit être installé à la barre pour isoler instantanément le moteur électrique et le parc de traction en cas d'avarie.</li>
-                </ul>
-                <h4>2. Sécurité Incendie</h4>
-                <ul>
-                    <li><strong>Extinction en cale :</strong> Le compartiment moteur/batterie doit pouvoir être fermé hermétiquement et disposer d'un orifice de projection pour y injecter un agent extincteur depuis l'extérieur sans ouvrir les panneaux de cale.</li>
-                </ul>
-            `;
-        }
-
-        // CAS 4 : USAGE PÊCHE PROFESSIONNELLE (DIVISION 226 / 227)
+        // BRANCHE 2 : PÊCHE PROFESSIONNELLE
         else if (usage === 'peche') {
-            const divPeche = longueur < 12 ? "Division 227" : "Division 226";
-            titre.innerText = divPeche;
-            desc.innerText = `Règlement de sécurité des navires de pêche professionnelle de taille inférieure à 24 mètres.`;
-            alerteStabilite.style.style.display = "none";
-
-            htmlContent = `
-                <h3>🐟 Normes Électriques Navire de Pêche (Division 226 / 227)</h3>
-                <h4>1. Robustesse et Étanchéité</h4>
-                <ul>
-                    <li><strong>Indice IP Élevé :</strong> Le milieu de la pêche artisanale étant très exposé, les moteurs et les coffrets de batteries doivent afficher un indice de protection d'origine minimal <span class="badge">IP56</span> ou <span class="badge">IP65</span> (résistance aux paquets de mer et nettoyages haute pression).</li>
-                    <li><strong>Contrôleur d'Isolement (CPI) :</strong> Obligatoire pour éviter toute fuite de courant dans la coque, protégeant l'équipage contre les risques d'électrisation lors des manœuvres des engins de pêche (treuils, apparaux).</li>
-                </ul>
-                <h4>2. Autonomie et Continuité</h4>
-                <ul>
-                    <li><strong>Alimentation de secours :</strong> Le parc de batterie de propulsion ne doit pas être partagé avec les équipements de navigation obligatoires (VHF, GPS, feux de navigation), qui doivent conserver leur propre batterie de secours indépendante.</li>
-                </ul>
-            `;
+            if (longueur < 12) {
+                divisionCalculee = "DIV_227";
+                titre.innerText = "Division 227";
+                desc.innerText = "Navires de pêche de longueur inférieure à 12 mètres (petite pêche côtière).";
+            } else if (longueur >= 12 && longueur < 24) {
+                divisionCalculee = "DIV_226";
+                titre.innerText = "Division 226";
+                desc.innerText = "Navires de pêche de longueur comprise entre 12 et 24 mètres.";
+            } else {
+                divisionCalculee = "DIV_228";
+                titre.innerText = "Division 228";
+                desc.innerText = "Grands navires de pêche industrielle (longueur ≥ 24 mètres).";
+            }
         }
 
-        // CAS 5 : AQUACULTURE / NAVIRES DE TRAVAIL (DIVISION 230)
+        // BRANCHE 3 : PLAISANCE PERSONNELLE
+        else if (usage === 'plaisance_perso') {
+            if (longueur < 24) {
+                divisionCalculee = "DIV_240";
+                titre.innerText = "Division 240";
+                desc.innerText = "Navires de plaisance à usage personnel de longueur inférieure à 24 mètres.";
+            } else {
+                divisionCalculee = "DIV_242_PRIVE";
+                titre.innerText = "Division 242 (Privé)";
+                desc.innerText = "Grands yachts de plaisance privés d'une longueur supérieure ou égale à 24 mètres.";
+            }
+        }
+
+        // BRANCHE 4 : PLAISANCE COMMERCIALE (NUC)
+        else if (usage === 'plaisance_pro') {
+            if (longueur < 24) {
+                divisionCalculee = "DIV_241";
+                titre.innerText = "Division 241 (NUC)";
+                desc.innerText = "Navires de plaisance à utilisation commerciale de moins de 24 mètres (Charter / Skipper).";
+            } else {
+                divisionCalculee = "DIV_242_PRO";
+                titre.innerText = "Division 242 (Commercial)";
+                desc.innerText = "Grands yachts de pavillon français exploités commercialement (longueur ≥ 24 mètres).";
+            }
+        }
+
+        // BRANCHE 5 : AQUACULTURE / TRAVAIL
         else if (usage === 'travail') {
-            titre.innerText = "Division 230 / 238";
-            desc.innerText = "Règlement applicable aux navires de travaux maritimes côtiers et barges aquacoles.";
-            alerteStabilite.style.style.display = "none";
-
-            htmlContent = `
-                <h3>🏗️ Spécifications Barges de Travail &amp; Aquaculture (Division 230)</h3>
-                <h4>1. Fixation Mécanique et Chocs</h4>
-                <ul>
-                    <li><strong>Résistance aux impacts :</strong> Les structures de réception des batteries doivent être surdimensionnées pour résister aux chocs répétés contre les installations conchylicoles, les quais ou lors de manutentions lourdes à la grue à bord.</li>
-                </ul>
-                <h4>2. Sécurité Électrique de Puissance</h4>
-                <ul>
-                    <li><strong>Protection Electrolyse :</strong> Exigence absolue de surveillance de l'isolement du réseau électrique de propulsion. Les fuites de courant de traction sont la cause principale de la corrosion perforante ultra-rapide sur les coques alu des barges de travail.</li>
-                </ul>
-            `;
+            if (longueur < 24) {
+                divisionCalculee = "DIV_230";
+                titre.innerText = "Division 230 / 238";
+                desc.innerText = "Navires de service et barges aquacoles de longueur inférieure à 24 mètres.";
+            } else {
+                divisionCalculee = "DIV_222";
+                titre.innerText = "Division 222";
+                desc.innerText = "Navires de charge et navires industriels lourds de longueur supérieure à 24 mètres.";
+            }
         }
 
-        // Injection finale du contenu réécrit dans le bloc jaune
+        // ==========================================
+        // TEXTES DES PRESCRIPTIONS AJUSTÉS AUX DIVISIONS CALCULÉES
+        // ==========================================
+
+        // Spécificités : DIVISION 223b (Votre cible de départ)
+        if (divisionCalculee === "DIV_223B") {
+            htmlContent = `
+                <h3>⚡ Prescriptions Division 223b &amp; 219-6 (Passagers &lt; 24m - Alu/Composite)</h3>
+                <ul>
+                    <li><strong>Bilan de Stockage :</strong> Capacité requise : <span class="badge-green">${capaciteKwh} kWh</span> | Poids : <span class="badge-green">${poidsKg.toLocaleString()} kg (${poidsTonnes.toFixed(2)} t)</span>.</li>
+                    <li><strong>Homologation Marine Obligatoire :</strong> Agrément d'approbation de type (*Type Approval*) par organisme notifié (Bureau Veritas, DNV ou RINA) obligatoire pour le pack complet (Cellules + BMS). Norme <span class="badge">CEI 62619</span> exigée.</li>
+                    <li><strong>Protection Incendie Critique (Div. 322) :</strong> Les coques en aluminium ou en composite n'ayant pas la résistance naturelle de l'acier, le local batterie doit être certifié coupe-feu <span class="badge">A-60</span>. Système d'extinction fixe automatique (brouillard d'eau ou gaz) commandé depuis la passerelle obligatoire.</li>
+                    <li><strong>Estrin &amp; Structure :</strong> Les structures de fond doivent être renforcées pour encaisser les chocs et la masse localisée des batteries lors de la mise au sec mécanique ou sur l'estrin.</li>
+                </ul>
+            `;
+            // Activation alerte stabilité
+            if (poidsTonnes > seuilCritiqueTonnes) {
+                alerteStabilite.style.display = "block";
+                alerteStabilite.innerHTML = `<strong>⚠️ Alerte Division 211 (Stabilité critique) :</strong> Le poids calculé (${poidsTonnes.toFixed(2)} t) excède la capacité d'emport standard pour une coque légère de ${longueur}m. Un plan de pont spécifique et un test d'inclinaison par architecte naval seront exigés par le CSN.`;
+            } else { alerteStabilite.style.display = "none"; }
+        }
+
+        // Spécificités : DIVISION 223a (Passagers < 24m en Acier)
+        else if (divisionCalculee === "DIV_223A") {
+            htmlContent = `
+                <h3>⚓ Prescriptions Division 223a (Passagers &lt; 24m - Coque Acier)</h3>
+                <ul>
+                    <li><strong>Tolérance Incendie Structurelle :</strong> La coque étant en acier, le risque de propagation de l'emballage thermique est structurellement mieux confiné. L'isolation coupe-feu du compartiment batterie peut être assouplie (classe A-0 à A-30 selon positionnement), mais le système d'extinction fixe automatique reste obligatoire en espace clos.</li>
+                    <li><strong>Poids et Assiette :</strong> L'acier supporte mieux les charges lourdes en fond de cale, ce qui est un avantage pour les parcs lithium, mais l'étude de stabilité reste soumise à la Division 211.</li>
+                </ul>
+            `;
+            alerteStabilite.style.display = "none";
+        }
+
+        // Spécificités : DIVISIONS 223 ou 221 (Grands navires à Passagers)
+        else if (divisionCalculee === "DIV_223_GRAND" || divisionCalculee === "DIV_221") {
+            htmlContent = `
+                <h3>🚢 Prescriptions Lourdes Divisions 223 &amp; 221 (Grands Navires à Passagers / SOLAS)</h3>
+                <ul>
+                    <li><strong>Redondance de Propulsion Totale :</strong> Division de puissance obligatoire. Le parc de batteries doit être divisé en au moins deux locaux physiques totalement indépendants (généralement bâbord et tribord) séparés par des cloisons étanches A-60. La perte d'un local batterie ne doit pas priver le navire de plus de 50% de sa propulsion.</li>
+                    <li><strong>Système d'extinction industrielle :</strong> Exigence de systèmes d'extinction lourds centralisés (systèmes déluge ou CO2 haute pression) interconnectés aux alarmes d'urgence du navire.</li>
+                </ul>
+            `;
+            alerteStabilite.style.display = "none";
+        }
+
+        // Spécificités : DIVISION 227 (Petite Pêche < 12m)
+        else if (divisionCalculee === "DIV_227") {
+            htmlContent = `
+                <h3>🐟 Prescriptions Division 227 (Petite Pêche &lt; 12 mètres)</h3>
+                <ul>
+                    <li><strong>Étanchéité Renforcée (Milieu Sévère) :</strong> Les équipements électriques et caissons de batteries doivent afficher un indice minimal <span class="badge">IP66</span> ou <span class="badge">IP67</span> en raison de l'omniprésence d'humidité et des lavages à grande eau.</li>
+                    <li><strong>Réseau Électrique Simplifié :</strong> Le réseau de traction lithium est toléré en tension inférieure à 50V (TBT) pour limiter le besoin de certifications lourdes, mais un disjoncteur général d'urgence reste obligatoire.</li>
+                </ul>
+            `;
+            alerteStabilite.style.display = "none";
+        }
+
+        // Spécificités : DIVISION 226 (Pêche 12m à 24m)
+        else if (divisionCalculee === "DIV_226") {
+            htmlContent = `
+                <h3>🌊 Prescriptions Division 226 (Pêche Professionnelle 12m à 24m)</h3>
+                <ul>
+                    <li><strong>Contrôleur Permanent d'Isolement (CPI) :</strong> Obligatoire. Le réseau de traction haute tension ne doit absolument pas être relié à la masse de la coque. Un détecteur de défaut de terre doit alerter instantanément le patron de pêche pour bloquer l'électrolyse.</li>
+                    <li><strong>Autonomie Radiocommunications :</strong> Le parc de batteries moteur ne doit pas alimenter la VHF ou les instruments de détection. Une batterie de secours séparée (Div. 226-4) est exigée.</li>
+                </ul>
+            `;
+            alerteStabilite.style.display = "none";
+        }
+
+        // Spécificités : DIVISION 240 (Plaisance de Loisir)
+        else if (divisionCalculee === "DIV_240") {
+            htmlContent = `
+                <h3>⛵ Prescriptions Division 240 (Plaisance Privée &lt; 24m)</h3>
+                <ul>
+                    <li><strong>Régime Déclaratif (Marquage CE) :</strong> Pas d'inspection requise par le Bureau Veritas pour le parc batterie. Les batteries doivent être certifiées <span class="badge">CE</span> selon la directive européenne plaisance.</li>
+                    <li><strong>Sécurité de base :</strong> Fixation rigide du parc en coffret ventilé pour empêcher tout déplacement au talon ou à la gîte (résistance aux chocs de navigation). Coupe-circuit général manuel obligatoire.</li>
+                </ul>
+            `;
+            alerteStabilite.style.display = "none";
+        }
+
+        // Spécificités : DIVISION 241 (Plaisance Commerciale / NUC)
+        else if (divisionCalculee === "DIV_241") {
+            htmlContent = `
+                <h3>💼 Prescriptions Division 241 (Plaisance Commerciale / NUC)</h3>
+                <ul>
+                    <li><strong>Sécurisation du Skipper :</strong> Un interrupteur d'arrêt d'urgence de type "coup de poing" doit être positionné au poste de barre pour isoler instantanément les parcs de traction au Lithium en cas d'avarie mécanique ou électrique.</li>
+                    <li><strong>Accès d'extinction :</strong> Le compartiment batterie doit posséder un opercule d'extinction pour permettre d'injecter un extincteur CO2 depuis le pont sans ouvrir la cale (évite l'apport d'oxygène).</li>
+                </ul>
+            `;
+            alerteStabilite.style.display = "none";
+        }
+
+        // Spécificités : DIVISION 230 (Barges de Travail &amp; Aquaculture)
+        else if (divisionCalculee === "DIV_230") {
+            htmlContent = `
+                <h3>🏗️ Prescriptions Division 230 / 238 (Navires de Travail / Aquaculture)</h3>
+                <ul>
+                    <li><strong>Berceaux Anti-Chocs Réhaussés :</strong> Les batteries doivent être montées sur des châssis surélevés pour éviter le contact direct avec les eaux de fond de cale. La structure doit résister aux vibrations intenses des grues et des apparaux de levage de bord.</li>
+                    <li><strong>Isolation Coque Aluminium :</strong> Surveillance drastique des courants de fuite (CPI obligatoire) pour éliminer les risques de corrosion perforante galvanique sur les coques alu des parcs aquacoles.</li>
+                </ul>
+            `;
+            alerteStabilite.style.display = "none";
+        }
+
+        // Si cas hors normes non géré explicitement
+        else {
+            htmlContent = `<h3>⚡ Réglementation Générale Électrique Maritime</h3><p>Veuillez vous référer aux annexes cadres de la Division 219.</p>`;
+            alerteStabilite.style.display = "none";
+        }
+
+        // Injection du HTML calculé sur-mesure
         blocElectrique.innerHTML = htmlContent;
     }
 
-    // Lancement au chargement de la page
+    // Premier lancement au chargement
     calculerDivision();
 </script>
 
 </body>
 </html>
-
-
-
