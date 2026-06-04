@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -13,6 +12,7 @@
             --bg: #f8fafc;
             --warning-bg: #fffbeb;
             --warning-border: #d97706;
+            --links-bg: #f1f5f9;
         }
 
         body {
@@ -56,14 +56,6 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-        }
-
-        .full-width {
-            grid-column: span 2;
-        }
-
-        @media (max-width: 600px) {
-            .full-width { grid-column: span 1; }
         }
 
         label {
@@ -115,7 +107,7 @@
             padding: 20px;
             border-radius: 0 8px 8px 0;
             margin-top: 20px;
-            display: none; /* Géré par JS */
+            display: none;
         }
 
         .electric-specs h3 {
@@ -124,6 +116,19 @@
             font-size: 1.2rem;
             border-bottom: 1px solid #fde68a;
             padding-bottom: 5px;
+        }
+
+        .links-box {
+            background-color: var(--links-bg);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .links-box h4 {
+            margin-top: 0;
+            color: #334155;
         }
 
         ul {
@@ -145,13 +150,33 @@
             font-weight: bold;
             display: inline-block;
         }
+
+        .badge-blue {
+            background: #2563eb;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        a.btn-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a.btn-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>Simulateur réglementaire Affaires Maritimes</h1>
-    <p>Configurez les caractéristiques du navire pour identifier les règles de sécurité et les normes électriques obligatoires.</p>
+    <p>Configurez les caractéristiques du navire pour identifier les règles de sécurité, les obligations d'estrin et les normes électriques.</p>
     
     <div class="grid">
         <div class="form-group">
@@ -208,35 +233,40 @@
     </div>
 
     <div class="electric-specs" id="bloc-electrique">
-        <h3>⚡ Exigences Critiques Propulsion Électrique &amp; Stockage (Division 219-6)</h3>
-        
-        <p><strong>Réglementation d'origine (Arrêté du 23 novembre 1987 modifié) :</strong> Le navire doit répondre aux critères de sécurité stricts pour éviter l'emballement thermique et garantir la sécurité des passagers.</p>
+        <h3>⚡ Prescriptions Techniques Critiques (Divisions 223b, 219-6 &amp; 322)</h3>
         
         <h4>1. Certification Obligatoire des Batteries</h4>
         <ul>
-            <li><strong>Approbation de Type (Type Approval) :</strong> Le pack de batterie complet (Cellules + BMS + Enveloppe) doit posséder un certificat d'approbation d'une société de classification (Bureau Veritas, DNV, RINA).</li>
-            <li><strong>Norme Sécurité Lithium :</strong> Conformité stricte à la norme internationale <span class="badge">CEI 62619</span> obligatoire (sécurité des accumulateurs lithium industriels).</li>
-            <li><strong>Norme Transport :</strong> Certification d'origine <span class="badge">CEI 62281</span> pour la résistance au transport et aux chocs.</li>
+            <li><strong>Marine Type Approval :</strong> Le système global (cellules + BMS + coffret de protection) doit être certifié par un organisme notifié (Bureau Veritas, DNV, RINA).</li>
+            <li><strong>Normes d'origine obligatoires :</strong> Conformité absolue aux normes <span class="badge">CEI 62619</span> (sécurité des batteries au lithium industrielles) et <span class="badge">CEI 62281</span> (sécurité lors du transport).</li>
         </ul>
 
-        <h4>2. Architecture &amp; Système de Gestion (BMS)</h4>
+        <h4>2. Risque Incendie &amp; Extinction (Division 322 &amp; 223b)</h4>
         <ul>
-            <li><strong>Alerte Passerelle Préventive :</strong> Le BMS doit obligatoirement renvoyer une alarme visuelle et sonore au poste de pilotage <em>avant</em> toute déconnexion automatique d'un bloc de batteries.</li>
-            <li><strong>Sauvegarde de puissance :</strong> La coupure de sécurité d'un parc de batterie ne doit en aucun cas couper l'intégralité de la propulsion du navire (exigence de continuité de service).</li>
+            <li><strong>Isolation Structurelle :</strong> Le local abritant les batteries doit obligatoirement former un caisson étanche coupe-feu de classe <span class="badge">A-60</span> (résistance au feu testée pendant 60 minutes).</li>
+            <li><strong>Système d'extinction fixe :</strong> Obligation d'installer un dispositif fixe d'extinction automatique à déclenchement à distance (ex: brouillard d'eau haute pression ou agent inhibiteur gazeux) certifié spécifiquement pour étouffer l'emballement thermique du lithium. Les extincteurs à eau douce classiques ou CO2 standards sont interdits pour cet usage en local fermé.</li>
+            <li><strong>Dégazage &amp; Ventilation :</strong> Système de ventilation mécanique indépendant forçant l'extraction des gaz inflammables (hydrogène/monoxyde de carbone issus du dégazage) directement vers l'extérieur en zone saine.</li>
         </ul>
 
-        <h4>3. Local Batteries &amp; Protection Incendie</h4>
+        <h4>3. Contraintes d'Estrin (Échouage &amp; Mise au sec mécanique)</h4>
         <ul>
-            <li><strong>Cloisonnement Structurel :</strong> En Division 223b (coques alu/composite), le local batteries doit être isolé des zones passagers par des cloisons coupe-feu <span class="badge">A-60</span> (résistance 60 minutes).</li>
-            <li><strong>Ventilation Dédiée :</strong> Extraction mécanique d'air indépendante débouchant directement à l'extérieur en zone sécurisée pour évacuer les gaz toxiques/inflammables en cas de dégazage (*off-gassing*).</li>
-            <li><strong>Extinction Fixe :</strong> Le local doit intégrer un système d'extinction fixe automatique par brouillard d'eau ou agent gazeux spécifique certifié pour les feux de lithium (interdiction des systèmes à eau classiques).</li>
+            <li><strong>Renfort structurel de quille :</strong> Si le navire utilise un estrin ou est destiné à s'échouer régulièrement à la marée, les liaisons de coque et les carlingues de fond doivent être échantillonnées pour supporter le poids accru des parcs de batteries sans déformation.</li>
+            <li><strong>Isolation des chocs mécaniques :</strong> L'intégration mécanique des berceaux de batteries doit amortir les vibrations et les chocs verticaux violents liés à la mise sur l'estrin, afin de prévenir les courts-circuits internes des cellules lithium (exigence de l'inspection de sécurité).</li>
         </ul>
 
         <h4>4. Motorisation &amp; Sécurité Électrique</h4>
         <ul>
-            <li><strong>Norme Moteur :</strong> Les moteurs électriques de propulsion doivent être conformes aux normes de la série <span class="badge">CEI 60034</span>.</li>
-            <li><strong>Étanchéité :</strong> Indice de protection minimal <span class="badge">IP44</span> en cale fermée, fortement recommandé en <span class="badge">IP56</span> ou <span class="badge">IP68</span> selon l'exposition à l'eau de mer.</li>
-            <li><strong>Contrôleur d'Isolement (CPI) :</strong> Obligation d'installer un contrôleur permanent d'isolement sur le réseau de puissance. Le réseau ne doit pas être mis à la masse de la coque pour éliminer le risque d'électrolyse (destruction rapide des coques en aluminium).</li>
+            <li><strong>Norme Moteur :</strong> Moteurs de propulsion certifiés selon la série <span class="badge">CEI 60034</span> (machines électriques tournantes).</li>
+            <li><strong>Contrôleur Permanent d'Isolement (CPI) :</strong> Obligation d'un réseau à neutre isolé de la coque avec surveillance continue. Toute perte d'isolement doit immédiatement lever une alarme visuelle et sonore en passerelle pour prévenir le risque d'électrolyse destructrice sur les coques alu.</li>
+        </ul>
+    </div>
+
+    <div class="links-box">
+        <h4>📂 Liens officiels vers la réglementation d'origine (Gouvernement Français)</h4>
+        <ul>
+            <li><span class="badge-blue">Légifrance</span> : <a class="btn-link" href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000313605/" target="_blank">Arrêté du 23 novembre 1987 (Règlement général de sécurité)</a></li>
+            <li><span class="badge-blue">Ministère de la Mer</span> : <a class="btn-link" href="https://www.mer.gouv.fr/sites/default/files/2020-11/Division_223b_0.pdf" target="_blank">Télécharger le texte d'origine de la Division 223b (PDF)</a></li>
+            <li><span class="badge-blue">Ministère de la Mer</span> : <a class="btn-link" href="https://www.mer.gouv.fr/sites/default/files/2020-11/Division_219.pdf" target="_blank">Télécharger le texte d'origine de la Division 219 - Systèmes Électriques (PDF)</a></li>
         </ul>
     </div>
 </div>
@@ -260,7 +290,6 @@
         const groupPassagers = document.getElementById('group-passagers');
         const blocElectrique = document.getElementById('bloc-electrique');
 
-        // Afficher/Masquer le champ passager selon l'activité
         if (usage === 'passagers') {
             groupPassagers.style.opacity = "1";
             groupPassagers.style.pointerEvents = "auto";
@@ -269,90 +298,50 @@
             groupPassagers.style.pointerEvents = "none";
         }
 
-        // Afficher le volet "Normes Électriques" si l'option est cochée
         if (propulsion === 'electrique') {
             blocElectrique.style.display = "block";
         } else {
             blocElectrique.style.display = "none";
         }
 
-        // --- MOTEUR DE CALCUL DE L'ARBRE DE DÉCISION ---
-
-        // Branche Pêche
+        // Logique simplifiée arbre
         if (usage === 'peche') {
-            if (longueur < 12) {
-                titre.innerText = "Division 227";
-                desc.innerText = "Navires de pêche de petite taille (moins de 12 mètres). Normes de sécurité artisanales.";
-            } else if (longueur >= 12 && longueur < 24) {
-                titre.innerText = "Division 226";
-                desc.innerText = "Navires de pêche de taille intermédiaire (12 à 24 mètres). Exigences renforcées de stabilité.";
-            } else {
-                titre.innerText = "Division 228";
-                desc.innerText = "Navires de pêche de grande taille (24 mètres et plus). Réglementation de pêche industrielle.";
-            }
-        }
-        
-        // Branche Plaisance Personnelle
-        else if (usage === 'plaisance_perso') {
-            if (longueur < 24) {
-                titre.innerText = "Division 240";
-                desc.innerText = "Règlement phare de la plaisance de loisir. Le matériel d'armement dépend de l'éloignement d'un abri.";
-            } else {
-                titre.innerText = "Division 242";
-                desc.innerText = "Règlementation applicable aux grands yachts de loisir privés (plus de 24 mètres).";
-            }
-        }
-
-        // Branche Plaisance Commerciale (NUC)
-        else if (usage === 'plaisance_pro') {
-            if (longueur < 24) {
-                titre.innerText = "Division 241 (NUC)";
-                desc.innerText = "Navires de plaisance à Utilisation Commerciale de moins de 24 mètres (location avec skipper, charter). Limité à un maximum de 12 passagers.";
-            } else {
-                titre.innerText = "Division 242 (Yacht Commercial)";
-                desc.innerText = "Règlement de sécurité des grands yachts de pavillon français exploités commercialement.";
-            }
-        }
-
-        // Branche Travail / Aquaculture
-        else if (usage === 'travail') {
-            if (longueur < 24) {
-                titre.innerText = "Division 230 / 238";
-                desc.innerText = "Navires aquacoles, conchylicoles ou petites embarcations de servitude et travaux maritimes côtiers.";
-            } else {
-                titre.innerText = "Division 222";
-                desc.innerText = "Navires de charge de petite jauge brute (cargos, remorqueurs lourds).";
-            }
-        }
-
-        // Branche Navires à Passagers
-        else if (usage === 'passagers') {
+            titre.innerText = longueur < 12 ? "Division 227" : "Division 226/228";
+            desc.innerText = "Réglementation relative aux navires de pêche professionnelle.";
+        } else if (usage === 'plaisance_perso') {
+            titre.innerText = "Division 240";
+            desc.innerText = "Règlement de la plaisance de loisir.";
+        } else if (usage === 'plaisance_pro') {
+            titre.innerText = "Division 241 (NUC)";
+            desc.innerText = "Plaisance commerciale (Skipper / Charter), limitée à 12 passagers maximum.";
+        } else if (usage === 'travail') {
+            titre.innerText = "Division 230 / 222";
+            desc.innerText = "Navires aquacoles ou navires de charge/travaux maritimes.";
+        } else if (usage === 'passagers') {
             if (passagers <= 12) {
-                titre.innerText = "Erreur de catégorie (Max 12 passagers)";
-                desc.innerText = "Attention : un navire transportant 12 passagers ou moins ne peut pas être qualifié de 'Navire à passagers' au sens de la loi. Vous devez basculer l'activité sur 'Plaisance Commerciale / NUC (Division 241)'.";
-                blocElectrique.style.display = "none"; // Masqué car incohérent
+                titre.innerText = "Erreur (Max 12 passagers)";
+                desc.innerText = "Pour 12 passagers ou moins, l'homologation requise est la Division 241 (NUC) et non Navire à Passagers.";
+                blocElectrique.style.display = "none";
                 return;
             }
-
             if (zone === 'internationale') {
-                titre.innerText = "Division 221 (Sauvegarde de la vie en mer - SOLAS)";
-                desc.innerText = "Navires à passagers en voyages internationaux. Soumis aux conventions internationales majeures, processus d'homologation très lourd.";
+                titre.innerText = "Division 221 (SOLAS)";
+                desc.innerText = "Navire à passagers international.";
             } else {
                 if (longueur >= 24) {
                     titre.innerText = "Division 223";
-                    desc.innerText = "Grands navires à passagers en navigation nationale (Bacs de grande taille, Ferries nationaux).";
+                    desc.innerText = "Grand navire à passagers national.";
                 } else {
                     if (coque === 'acier') {
                         titre.innerText = "Division 223a";
-                        desc.innerText = "Navires à passagers de longueur inférieure à 24 mètres en navigation nationale, construits en acier.";
+                        desc.innerText = "Navire à passagers national de moins de 24 mètres en acier.";
                     } else {
-                        // LE CAS DE L'UTILISATEUR (223B + ÉLECTRIQUE)
                         if (propulsion === 'electrique') {
-                            titre.innerText = "Division 223b & Division 219-6";
-                            desc.innerText = "Navire à passagers (< 24m, coque alu/composite/bois). En raison de sa propulsion électrique/hybride, le navire est soumis de plein droit aux dispositions interconnectées de la Division 219 (Chapitre 6) pour la validation de ses batteries par le Centre de Sécurité des Navires.";
+                            titre.innerText = "Division 223b, 219-6 & 322";
+                            desc.innerText = "Navire à passagers national (< 24m, coque alu/composite/bois). Soumis de plein droit aux contraintes croisées de la Division 223b (structure), la Division 219 (stockage d'énergie lithium) et la Division 322 (systèmes d'extinction d'incendie fixes).";
                         } else {
                             titre.innerText = "Division 223b";
-                            desc.innerText = "Navires à passagers de longueur inférieure à 24 mètres en navigation nationale, construits en matériaux autres que l'acier (Aluminium, Composite, Bois).";
+                            desc.innerText = "Navire à passagers national de moins de 24 mètres en matériaux autres que l'acier.";
                         }
                     }
                 }
@@ -360,7 +349,6 @@
         }
     }
 
-    // Premier lancement automatique
     calculerDivision();
 </script>
 
