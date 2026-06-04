@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -230,7 +229,6 @@
     <p>Configurez les caractéristiques du navire pour identifier les règles de sécurité, les obligations d'estrin et l'impact du poids des batteries.</p>
     
     <div class="grid">
-        <!-- Usage -->
         <div class="form-group">
             <label for="usage">Usage / Activité principale</label>
             <select id="usage" onchange="calculerDivision()">
@@ -242,7 +240,6 @@
             </select>
         </div>
 
-        <!-- Zone de Navigation -->
         <div class="form-group">
             <label for="zone">Zone de navigation</label>
             <select id="zone" onchange="calculerDivision()">
@@ -251,7 +248,6 @@
             </select>
         </div>
 
-        <!-- Longueur -->
         <div class="form-group">
             <label for="longueur">Longueur du navire : <span id="longueur-val">15</span> m</label>
             <div class="slider-container">
@@ -259,13 +255,11 @@
             </div>
         </div>
 
-        <!-- Nombre de passagers -->
         <div class="form-group" id="group-passagers">
             <label for="passagers">Nombre de passagers à bord</label>
             <input type="number" id="passagers" value="25" min="0" oninput="calculerDivision()">
         </div>
 
-        <!-- Matériau de la coque -->
         <div class="form-group">
             <label for="coque">Matériau de la coque</label>
             <select id="coque" onchange="calculerDivision()">
@@ -274,7 +268,6 @@
             </select>
         </div>
 
-        <!-- Propulsion Électrique -->
         <div class="form-group">
             <label for="propulsion">Type de motorisation</label>
             <select id="propulsion" onchange="calculerDivision()">
@@ -283,9 +276,8 @@
             </select>
         </div>
 
-        <!-- BLOC DE CALCUL DE CAPACITÉ (Basé sur ePropulsion) -->
         <div class="sub-grid" id="bloc-calculateur-batterie" style="display: none;">
-            <h4>📐 Dimensionnement Électrique Réel (Base : ePropulsion Série G LFP - 100 Wh/kg)</h4>
+            <h4>📐 Dimensionnement Électrique Estimatif (Standard LFP Marine : 100 Wh/kg)</h4>
             <div class="form-group">
                 <label for="puissance-moteur">Puissance de la motorisation (kW)</label>
                 <input type="number" id="puissance-moteur" value="40" min="1" oninput="calculerDivision()">
@@ -297,54 +289,50 @@
         </div>
     </div>
 
-    <!-- Alerte Stabilité Critique (Division 211) -->
     <div class="alert-stability" id="alerte-stabilite">
         ⚠️ Alerte Stabilité Critique !
     </div>
 
-    <!-- Cadre de résultat principal -->
     <div class="result-box">
         <div class="result-title" id="div-titre">Division --</div>
         <p class="result-text" id="div-desc">Sélectionnez les options pour analyser le navire.</p>
     </div>
 
-    <!-- Cadre technique secondaire (Électrique, Incendie, Estrin) -->
     <div class="electric-specs" id="bloc-electrique">
         <h3>⚡ Prescriptions Techniques Critiques (Divisions 223b, 219-6 &amp; 322)</h3>
         
-        <h4>1. Bilan Énergétique Estimé (Gamme ePropulsion G-Series)</h4>
+        <h4>1. Bilan Énergétique Estimé</h4>
         <ul>
-            <li><strong>Capacité Utile Minimale Requise :</strong> <span class="badge-green" id="res-capacite">0 kWh</span> (prend en compte la profondeur de décharge recommandée de 80%).</li>
-            <li><strong>Poids Net du Parc de Batteries :</strong> <span class="badge-green" id="res-poids">0 kg</span> (Équivalent estimé en blocs ePropulsion G102-100).</li>
+            <li><strong>Capacité Utile Minimale Requise :</strong> <span class="badge-green" id="res-capacite">0 kWh</span> (prend en compte une profondeur de décharge recommandée de 80% pour la longévité des cellules).</li>
+            <li><strong>Poids Net Estimé du Parc :</strong> <span class="badge-green" id="res-poids">0 kg</span> (Intègre les cellules, le BMS d'équilibrage et le caisson de protection mécanique étanche).</li>
         </ul>
 
         <h4>2. Certification Obligatoire des Batteries</h4>
         <ul>
-            <li><strong>Marine Type Approval :</strong> Le système d'origine ePropulsion doit impérativement être fourni avec ses certificats d'approbation d'organisme notifié (Bureau Veritas / DNV) pour la conformité avec la Division 219-6.</li>
-            <li><strong>Normes d'origine obligatoires :</strong> Les blocs doivent valider les protocoles <span class="badge">CEI 62619</span> (sécurité d'exploitation) et <span class="badge">CEI 62281</span> (sécurité de transport des cellules).</li>
+            <li><strong>Marine Type Approval :</strong> Le système de stockage d'énergie complet doit obligatoirement faire l'objet d'un certificat d'approbation par un organisme notifié (Bureau Veritas, DNV, RINA) pour être accepté au titre de la Division 219-6.</li>
+            <li><strong>Normes d'origine obligatoires :</strong> Les modules doivent valider les protocoles <span class="badge">CEI 62619</span> (sécurité d'exploitation industrielle et marine) et <span class="badge">CEI 62281</span> (sécurité lors du transport).</li>
         </ul>
 
         <h4>3. Risque Incendie &amp; Extinction (Division 322 &amp; 223b)</h4>
         <ul>
-            <li><strong>Isolation Structurelle :</strong> Le caisson ou local abritant les batteries ePropulsion doit être doté d'une isolation coupe-feu de classe <span class="badge">A-60</span> (résistance de 60 minutes face aux locaux machines ou passagers).</li>
-            <li><strong>Système d'extinction fixe :</strong> Le compartiment doit être équipé d'un système automatique fixe (brouillard d'eau ou gaz inhibiteur) certifié contre l'emballement thermique. Les extincteurs manuels standard ne suffisent pas pour la commission de sécurité.</li>
-            <li><strong>Évacuation des gaz :</strong> Ventilation d'extraction mécanique exclusive débouchant vers l'extérieur pour prévenir l'accumulation de gaz toxiques en cas de défaillance.</li>
+            <li><strong>Isolation Structurelle :</strong> Le local ou compartiment dédié aux batteries doit être isolé des zones passagers et machines par des cloisons coupe-feu de classe <span class="badge">A-60</span> (résistance structurelle de 60 minutes).</li>
+            <li><strong>Système d'extinction fixe :</strong> Le volume doit être protégé par un dispositif automatique fixe (brouillard d'eau ou gaz inhibiteur) certifié contre l'emballement thermique. Les extincteurs manuels classiques ne sont pas acceptés pour valider ce compartiment.</li>
+            <li><strong>Évacuation des gaz :</strong> Ventilation d'extraction mécanique exclusive et étanche débouchant vers l'extérieur pour évacuer les gaz toxiques ou inflammables en cas de défaillance.</li>
         </ul>
 
         <h4>4. Contraintes d'Estrin (Échouage &amp; Mise au sec mécanique)</h4>
         <ul>
-            <li><strong>Renfort structurel de quille :</strong> Les structures de fond du navire doivent être calculées pour encaisser la charge lourde et concentrée des racks ePropulsion lors des échouages répétés sur l'estrin.</li>
-            <li><strong>Amortissement mécanique :</strong> Les berceaux de fixation doivent protéger l'intégrité physique du rack de batterie afin d'éviter qu'un choc sec d'échouage ne provoque un court-circuit interne des cellules.</li>
+            <li><strong>Renfort structurel de quille :</strong> Les liaisons de coque et les varangues de fond doivent être dimensionnées pour encaisser la charge lourde et concentrée du parc de batteries lors des échouages réguliers sur l'estrin.</li>
+            <li><strong>Amortissement mécanique :</strong> Les berceaux de fixation doivent protéger les modules de batteries afin d'éviter qu'un choc mécanique sec lié à la mise sur l'estrin ne provoque un court-circuit interne des cellules.</li>
         </ul>
 
         <h4>5. Motorisation &amp; Sécurité Électrique</h4>
         <ul>
-            <li><strong>Norme Moteur :</strong> Conforme à la série internationale <span class="badge">CEI 60034</span>.</li>
+            <li><strong>Norme Moteur :</strong> Motorisations certifiées selon la série internationale <span class="badge">CEI 60034</span>.</li>
             <li><strong>Contrôleur Permanent d'Isolement (CPI) :</strong> Obligation d'un réseau de puissance à neutre isolé. Une alarme immédiate en passerelle doit avertir le pilote de tout défaut d'isolement avant l'apparition de corrosion galvanique sur les coques (surtout en aluminium).</li>
         </ul>
     </div>
 
-    <!-- Liens de téléchargement officiels -->
     <div class="links-box">
         <h4>📂 Liens officiels vers la réglementation d'origine (Gouvernement Français)</h4>
         <ul>
@@ -391,9 +379,9 @@
             blocElectrique.style.display = "block";
             blocCalculateur.style.display = "grid";
             
-            // Calcul basé sur l'efficacité ePropulsion LFP et 80% DoD maximum conseillé
+            // Calcul basé sur l'efficacité technologique standard LFP marine (80% DoD max)
             const capaciteKwh = Math.round((puissanceMoteur * autonomie) * 1.2);
-            // Densité réelle ePropulsion G102-100 : 10.24 kWh pour 102kg (Soit un ratio stable de 10 kg / kWh)
+            // Ratio générique intégrant l'environnement de sécurité marine : 10 kg / kWh
             const poidsKg = capaciteKwh * 10;
 
             document.getElementById('res-capacite').innerText = capaciteKwh + " kWh";
@@ -411,7 +399,7 @@
 
             if (poidsTonnes > seuilCritiqueTonnes && usage === 'passagers' && coque === 'autre') {
                 alerteStabilite.style.display = "block";
-                alerteStabilite.innerHTML = "<strong>⚠️ Alerte Division 211 (Stabilité critique) :</strong> Le poids de votre parc ePropulsion (" + poidsTonnes.toFixed(2) + " t) dépasse le seuil critique recommandé pour une coque de " + (longueur) + "m en matériau léger (alu/composite). Une étude de stabilité avec calcul des centres de gravité par un architecte naval sera requise par la commission de sécurité.";
+                alerteStabilite.innerHTML = "<strong>⚠️ Alerte Division 211 (Stabilité critique) :</strong> Le poids de votre parc de batteries (" + poidsTonnes.toFixed(2) + " t) dépasse le seuil critique recommandé pour une coque de " + (longueur) + "m en matériau léger (alu/composite). Une étude de stabilité avec calcul des centres de gravité par un architecte naval sera requise par la commission de sécurité.";
             } else {
                 alerteStabilite.style.display = "none";
             }
