@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulateur de Divisions Maritimes & Électriques</title>
+    <title>Simulateur de Divisions Maritimes &amp; Électriques</title>
     <style>
         :root {
             --primary: #1e3a8a;
@@ -230,6 +230,7 @@
     <p>Configurez les caractéristiques du navire pour identifier les règles de sécurité, les obligations d'estrin et l'impact du poids des batteries.</p>
     
     <div class="grid">
+        <!-- Usage -->
         <div class="form-group">
             <label for="usage">Usage / Activité principale</label>
             <select id="usage" onchange="calculerDivision()">
@@ -241,6 +242,7 @@
             </select>
         </div>
 
+        <!-- Zone de Navigation -->
         <div class="form-group">
             <label for="zone">Zone de navigation</label>
             <select id="zone" onchange="calculerDivision()">
@@ -249,6 +251,7 @@
             </select>
         </div>
 
+        <!-- Longueur -->
         <div class="form-group">
             <label for="longueur">Longueur du navire : <span id="longueur-val">15</span> m</label>
             <div class="slider-container">
@@ -256,11 +259,13 @@
             </div>
         </div>
 
+        <!-- Nombre de passagers -->
         <div class="form-group" id="group-passagers">
             <label for="passagers">Nombre de passagers à bord</label>
             <input type="number" id="passagers" value="25" min="0" oninput="calculerDivision()">
         </div>
 
+        <!-- Matériau de la coque -->
         <div class="form-group">
             <label for="coque">Matériau de la coque</label>
             <select id="coque" onchange="calculerDivision()">
@@ -269,6 +274,7 @@
             </select>
         </div>
 
+        <!-- Propulsion Électrique -->
         <div class="form-group">
             <label for="propulsion">Type de motorisation</label>
             <select id="propulsion" onchange="calculerDivision()">
@@ -277,63 +283,68 @@
             </select>
         </div>
 
+        <!-- BLOC DE CALCUL DE CAPACITÉ (Basé sur ePropulsion) -->
         <div class="sub-grid" id="bloc-calculateur-batterie" style="display: none;">
-            <h4>📐 Dimensionnement Électrique Estimatif (Densité moyenne LFP Marine : 100 Wh/kg)</h4>
+            <h4>📐 Dimensionnement Électrique Réel (Base : ePropulsion Série G LFP - 100 Wh/kg)</h4>
             <div class="form-group">
-                <label for="puissance-moteur">Puissance du moteur (kW)</label>
-                <input type="number" id="puissance-moteur" value="50" min="1" oninput="calculerDivision()">
+                <label for="puissance-moteur">Puissance de la motorisation (kW)</label>
+                <input type="number" id="puissance-moteur" value="40" min="1" oninput="calculerDivision()">
             </div>
             <div class="form-group">
-                <label for="autonomie">Autonomie souhaitée en croisière (Heures)</label>
-                <input type="number" id="autonomie" value="4" min="0.5" step="0.5" oninput="calculerDivision()">
+                <label for="autonomie">Autonomie cible à pleine puissance (Heures)</label>
+                <input type="number" id="autonomie" value="1" min="0.5" step="0.5" oninput="calculerDivision()">
             </div>
         </div>
     </div>
 
+    <!-- Alerte Stabilité Critique (Division 211) -->
     <div class="alert-stability" id="alerte-stabilite">
         ⚠️ Alerte Stabilité Critique !
     </div>
 
+    <!-- Cadre de résultat principal -->
     <div class="result-box">
         <div class="result-title" id="div-titre">Division --</div>
         <p class="result-text" id="div-desc">Sélectionnez les options pour analyser le navire.</p>
     </div>
 
+    <!-- Cadre technique secondaire (Électrique, Incendie, Estrin) -->
     <div class="electric-specs" id="bloc-electrique">
         <h3>⚡ Prescriptions Techniques Critiques (Divisions 223b, 219-6 &amp; 322)</h3>
         
-        <h4>1. Bilan Énergétique Estimé</h4>
+        <h4>1. Bilan Énergétique Estimé (Gamme ePropulsion G-Series)</h4>
         <ul>
-            <li><strong>Capacité Utile Requise :</strong> <span class="badge-green" id="res-capacite">0 kWh</span> (avec marge technique de sécurité de 20%).</li>
-            <li><strong>Poids Estimé du Parc :</strong> <span class="badge-green" id="res-poids">0 kg</span> (Berceaux métalliques et BMS inclus).</li>
+            <li><strong>Capacité Utile Minimale Requise :</strong> <span class="badge-green" id="res-capacite">0 kWh</span> (prend en compte la profondeur de décharge recommandée de 80%).</li>
+            <li><strong>Poids Net du Parc de Batteries :</strong> <span class="badge-green" id="res-poids">0 kg</span> (Équivalent estimé en blocs ePropulsion G102-100).</li>
         </ul>
 
         <h4>2. Certification Obligatoire des Batteries</h4>
         <ul>
-            <li><strong>Marine Type Approval :</strong> Le système global (cellules + BMS + coffret de protection) doit être certifié par un organisme notifié (Bureau Veritas, DNV, RINA).</li>
-            <li><strong>Normes d'origine obligatoires :</strong> Conformité absolue aux normes <span class="badge">CEI 62619</span> (sécurité des batteries au lithium industrielles) et <span class="badge">CEI 62281</span> (sécurité lors du transport).</li>
+            <li><strong>Marine Type Approval :</strong> Le système d'origine ePropulsion doit impérativement être fourni avec ses certificats d'approbation d'organisme notifié (Bureau Veritas / DNV) pour la conformité avec la Division 219-6.</li>
+            <li><strong>Normes d'origine obligatoires :</strong> Les blocs doivent valider les protocoles <span class="badge">CEI 62619</span> (sécurité d'exploitation) et <span class="badge">CEI 62281</span> (sécurité de transport des cellules).</li>
         </ul>
 
         <h4>3. Risque Incendie &amp; Extinction (Division 322 &amp; 223b)</h4>
         <ul>
-            <li><strong>Isolation Structurelle :</strong> Le local abritant les batteries doit obligatoirement former un caisson étanche coupe-feu de classe <span class="badge">A-60</span> (résistance au feu testée pendant 60 minutes).</li>
-            <li><strong>Système d'extinction fixe :</strong> Dispositif automatique à déclenchement à distance (brouillard d'eau ou agent gazeux) certifié pour stopper l'emballement thermique. Extincteurs classiques interdits.</li>
-            <li><strong>Dégazage :</strong> Extraction mécanique indépendante forçant l'évacuation des gaz vers l'extérieur.</li>
+            <li><strong>Isolation Structurelle :</strong> Le caisson ou local abritant les batteries ePropulsion doit être doté d'une isolation coupe-feu de classe <span class="badge">A-60</span> (résistance de 60 minutes face aux locaux machines ou passagers).</li>
+            <li><strong>Système d'extinction fixe :</strong> Le compartiment doit être équipé d'un système automatique fixe (brouillard d'eau ou gaz inhibiteur) certifié contre l'emballement thermique. Les extincteurs manuels standard ne suffisent pas pour la commission de sécurité.</li>
+            <li><strong>Évacuation des gaz :</strong> Ventilation d'extraction mécanique exclusive débouchant vers l'extérieur pour prévenir l'accumulation de gaz toxiques en cas de défaillance.</li>
         </ul>
 
         <h4>4. Contraintes d'Estrin (Échouage &amp; Mise au sec mécanique)</h4>
         <ul>
-            <li><strong>Renfort structurel de quille :</strong> Les liaisons de coque et les varangues de fond doivent être échantillonnées pour supporter la charge ponctuelle lourde des batteries lors de la mise sur estrin.</li>
-            <li><strong>Amortissement mécanique :</strong> L'intégration des berceaux de batteries doit isoler les cellules des chocs verticaux secs subis lors de l'échouage régulier.</li>
+            <li><strong>Renfort structurel de quille :</strong> Les structures de fond du navire doivent être calculées pour encaisser la charge lourde et concentrée des racks ePropulsion lors des échouages répétés sur l'estrin.</li>
+            <li><strong>Amortissement mécanique :</strong> Les berceaux de fixation doivent protéger l'intégrité physique du rack de batterie afin d'éviter qu'un choc sec d'échouage ne provoque un court-circuit interne des cellules.</li>
         </ul>
 
         <h4>5. Motorisation &amp; Sécurité Électrique</h4>
         <ul>
-            <li><strong>Norme Moteur :</strong> Conforme à la série <span class="badge">CEI 60034</span>.</li>
-            <li><strong>Contrôleur Permanent d'Isolement (CPI) :</strong> Obligatoire. Le réseau ne doit pas être mis à la masse de la coque pour supprimer tout risque d'électrolyse (corrosion accélérée de l'aluminium).</li>
+            <li><strong>Norme Moteur :</strong> Conforme à la série internationale <span class="badge">CEI 60034</span>.</li>
+            <li><strong>Contrôleur Permanent d'Isolement (CPI) :</strong> Obligation d'un réseau de puissance à neutre isolé. Une alarme immédiate en passerelle doit avertir le pilote de tout défaut d'isolement avant l'apparition de corrosion galvanique sur les coques (surtout en aluminium).</li>
         </ul>
     </div>
 
+    <!-- Liens de téléchargement officiels -->
     <div class="links-box">
         <h4>📂 Liens officiels vers la réglementation d'origine (Gouvernement Français)</h4>
         <ul>
@@ -358,7 +369,6 @@
         const coque = document.getElementById('coque').value;
         const propulsion = document.getElementById('propulsion').value;
         
-        // Nouveaux paramètres électriques
         const puissanceMoteur = parseFloat(document.getElementById('puissance-moteur').value) || 0;
         const autonomie = parseFloat(document.getElementById('autonomie').value) || 0;
 
@@ -369,7 +379,6 @@
         const blocCalculateur = document.getElementById('bloc-calculateur-batterie');
         const alerteStabilite = document.getElementById('alerte-stabilite');
 
-        // Afficher/Masquer le champ passager selon l'activité
         if (usage === 'passagers') {
             groupPassagers.style.opacity = "1";
             groupPassagers.style.pointerEvents = "auto";
@@ -378,24 +387,19 @@
             groupPassagers.style.pointerEvents = "none";
         }
 
-        // Gestion de l'affichage des blocs électriques
         if (propulsion === 'electrique') {
             blocElectrique.style.display = "block";
             blocCalculateur.style.display = "grid";
             
-            // --- LOGIQUE DE CALCUL DU POIDS ET DE LA CAPACITÉ ---
-            // On calcule l'énergie nette consommée (Puissance x Temps)
-            // On ajoute une marge de décharge/sécurité de 20% (multiplié par 1.2)
+            // Calcul basé sur l'efficacité ePropulsion LFP et 80% DoD maximum conseillé
             const capaciteKwh = Math.round((puissanceMoteur * autonomie) * 1.2);
-            // Densité énergétique LFP marine moyenne de sécurité = 100 Wh/kg (soit 10 kg par kWh)
+            // Densité réelle ePropulsion G102-100 : 10.24 kWh pour 102kg (Soit un ratio stable de 10 kg / kWh)
             const poidsKg = capaciteKwh * 10;
 
             document.getElementById('res-capacite').innerText = capaciteKwh + " kWh";
             document.getElementById('res-poids').innerText = poidsKg.toLocaleString() + " kg (" + (poidsKg/1000).toFixed(2) + " t)";
 
-            // --- ANALYSE DE LA STABILITÉ (CRITÈRES ALERTE) ---
-            // Seuil empirique de sécurité : Le poids de la batterie ne doit pas excéder un certain ratio de la taille du navire
-            // Exemple : Pour 15m, si batterie > 2.5 tonnes -> Alerte Division 211
+            // Seuils de déclenchement d'alarme de stabilité (Division 211)
             let seuilCritiqueTonnes = 1.0; 
             if (longueur <= 12) seuilCritiqueTonnes = 1.2;
             else if (longueur <= 16) seuilCritiqueTonnes = 2.5;
@@ -407,7 +411,7 @@
 
             if (poidsTonnes > seuilCritiqueTonnes && usage === 'passagers' && coque === 'autre') {
                 alerteStabilite.style.display = "block";
-                alerteStabilite.innerHTML = "<strong>⚠️ Alerte Division 211 (Stabilité critique) :</strong> Le poids estimé du parc de batteries (" + poidsTonnes.toFixed(2) + " t) est trop élevé pour un navire en " + (longueur) + "m de type composite/alu. Une étude de stabilité approfondie (test d'inclinaison, pesée de coque) menée par un cabinet d'architecture navale agréé sera exigée par le CSN pour obtenir le permis de navigation.";
+                alerteStabilite.innerHTML = "<strong>⚠️ Alerte Division 211 (Stabilité critique) :</strong> Le poids de votre parc ePropulsion (" + poidsTonnes.toFixed(2) + " t) dépasse le seuil critique recommandé pour une coque de " + (longueur) + "m en matériau léger (alu/composite). Une étude de stabilité avec calcul des centres de gravité par un architecte naval sera requise par la commission de sécurité.";
             } else {
                 alerteStabilite.style.display = "none";
             }
@@ -418,7 +422,7 @@
             alerteStabilite.style.display = "none";
         }
 
-        // Logique de calcul des divisions
+        // Moteur logique des divisions
         if (usage === 'peche') {
             titre.innerText = longueur < 12 ? "Division 227" : "Division 226/228";
             desc.innerText = "Réglementation relative aux navires de pêche professionnelle.";
@@ -454,7 +458,7 @@
                     } else {
                         if (propulsion === 'electrique') {
                             titre.innerText = "Division 223b, 219-6 & 322";
-                            desc.innerText = "Navire à passagers national (< 24m, coque alu/composite/bois). Soumis aux contraintes de la Division 223b (structure), la Division 219-6 (Lithium) et la Division 322 (incendie).";
+                            desc.innerText = "Navire à passagers national (< 24m, coque alu/composite/bois). Soumis aux contraintes croisées de la Division 223b (structure), la Division 219-6 (Règles électriques Lithium) et la Division 322 (incendie).";
                         } else {
                             titre.innerText = "Division 223b";
                             desc.innerText = "Navire à passagers national de moins de 24 mètres en matériaux autres que l'acier.";
