@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -12,6 +13,9 @@
             --bg: #f8fafc;
             --warning-bg: #fffbeb;
             --warning-border: #d97706;
+            --danger-bg: #fef2f2;
+            --danger-border: #dc2626;
+            --danger-text: #991b1b;
             --links-bg: #f1f5f9;
         }
 
@@ -58,6 +62,32 @@
             gap: 8px;
         }
 
+        .sub-grid {
+            grid-column: span 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            background-color: #f0fdf4;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #bbf7d0;
+        }
+
+        @media (max-width: 600px) {
+            .sub-grid { grid-column: span 1; grid-template-columns: 1fr; }
+        }
+
+        .sub-grid h4 {
+            grid-column: span 2;
+            margin: 0;
+            color: #166534;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 600px) {
+            .sub-grid h4 { grid-column: span 1; }
+        }
+
         label {
             font-weight: 600;
             font-size: 0.95rem;
@@ -99,6 +129,17 @@
             font-weight: 700;
             color: var(--primary);
             margin: 0 0 15px 0;
+        }
+
+        .alert-stability {
+            background-color: var(--danger-bg);
+            border: 1px solid var(--danger-border);
+            color: var(--danger-text);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 500;
         }
 
         .electric-specs {
@@ -161,6 +202,16 @@
             display: inline-block;
         }
 
+        .badge-green {
+            background: #166534;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+
         a.btn-link {
             color: var(--primary);
             text-decoration: none;
@@ -176,7 +227,7 @@
 
 <div class="container">
     <h1>Simulateur réglementaire Affaires Maritimes</h1>
-    <p>Configurez les caractéristiques du navire pour identifier les règles de sécurité, les obligations d'estrin et les normes électriques.</p>
+    <p>Configurez les caractéristiques du navire pour identifier les règles de sécurité, les obligations d'estrin et l'impact du poids des batteries.</p>
     
     <div class="grid">
         <div class="form-group">
@@ -199,9 +250,9 @@
         </div>
 
         <div class="form-group">
-            <label for="longueur">Longueur du navire : <span id="longueur-val">20</span> m</label>
+            <label for="longueur">Longueur du navire : <span id="longueur-val">15</span> m</label>
             <div class="slider-container">
-                <input type="range" id="longueur" min="5" max="50" value="20" oninput="updateLongueur(this.value)">
+                <input type="range" id="longueur" min="5" max="50" value="15" oninput="updateLongueur(this.value)">
             </div>
         </div>
 
@@ -225,6 +276,22 @@
                 <option value="electrique">100% Électrique ou Hybride (Batteries Lithium)</option>
             </select>
         </div>
+
+        <div class="sub-grid" id="bloc-calculateur-batterie" style="display: none;">
+            <h4>📐 Dimensionnement Électrique Estimatif (Densité moyenne LFP Marine : 100 Wh/kg)</h4>
+            <div class="form-group">
+                <label for="puissance-moteur">Puissance du moteur (kW)</label>
+                <input type="number" id="puissance-moteur" value="50" min="1" oninput="calculerDivision()">
+            </div>
+            <div class="form-group">
+                <label for="autonomie">Autonomie souhaitée en croisière (Heures)</label>
+                <input type="number" id="autonomie" value="4" min="0.5" step="0.5" oninput="calculerDivision()">
+            </div>
+        </div>
+    </div>
+
+    <div class="alert-stability" id="alerte-stabilite">
+        ⚠️ Alerte Stabilité Critique !
     </div>
 
     <div class="result-box">
@@ -235,36 +302,42 @@
     <div class="electric-specs" id="bloc-electrique">
         <h3>⚡ Prescriptions Techniques Critiques (Divisions 223b, 219-6 &amp; 322)</h3>
         
-        <h4>1. Certification Obligatoire des Batteries</h4>
+        <h4>1. Bilan Énergétique Estimé</h4>
+        <ul>
+            <li><strong>Capacité Utile Requise :</strong> <span class="badge-green" id="res-capacite">0 kWh</span> (avec marge technique de sécurité de 20%).</li>
+            <li><strong>Poids Estimé du Parc :</strong> <span class="badge-green" id="res-poids">0 kg</span> (Berceaux métalliques et BMS inclus).</li>
+        </ul>
+
+        <h4>2. Certification Obligatoire des Batteries</h4>
         <ul>
             <li><strong>Marine Type Approval :</strong> Le système global (cellules + BMS + coffret de protection) doit être certifié par un organisme notifié (Bureau Veritas, DNV, RINA).</li>
             <li><strong>Normes d'origine obligatoires :</strong> Conformité absolue aux normes <span class="badge">CEI 62619</span> (sécurité des batteries au lithium industrielles) et <span class="badge">CEI 62281</span> (sécurité lors du transport).</li>
         </ul>
 
-        <h4>2. Risque Incendie &amp; Extinction (Division 322 &amp; 223b)</h4>
+        <h4>3. Risque Incendie &amp; Extinction (Division 322 &amp; 223b)</h4>
         <ul>
             <li><strong>Isolation Structurelle :</strong> Le local abritant les batteries doit obligatoirement former un caisson étanche coupe-feu de classe <span class="badge">A-60</span> (résistance au feu testée pendant 60 minutes).</li>
-            <li><strong>Système d'extinction fixe :</strong> Obligation d'installer un dispositif fixe d'extinction automatique à déclenchement à distance (ex: brouillard d'eau haute pression ou agent inhibiteur gazeux) certifié spécifiquement pour étouffer l'emballement thermique du lithium. Les extincteurs à eau douce classiques ou CO2 standards sont interdits pour cet usage en local fermé.</li>
-            <li><strong>Dégazage &amp; Ventilation :</strong> Système de ventilation mécanique indépendant forçant l'extraction des gaz inflammables (hydrogène/monoxyde de carbone issus du dégazage) directement vers l'extérieur en zone saine.</li>
+            <li><strong>Système d'extinction fixe :</strong> Dispositif automatique à déclenchement à distance (brouillard d'eau ou agent gazeux) certifié pour stopper l'emballement thermique. Extincteurs classiques interdits.</li>
+            <li><strong>Dégazage :</strong> Extraction mécanique indépendante forçant l'évacuation des gaz vers l'extérieur.</li>
         </ul>
 
-        <h4>3. Contraintes d'Estrin (Échouage &amp; Mise au sec mécanique)</h4>
+        <h4>4. Contraintes d'Estrin (Échouage &amp; Mise au sec mécanique)</h4>
         <ul>
-            <li><strong>Renfort structurel de quille :</strong> Si le navire utilise un estrin ou est destiné à s'échouer régulièrement à la marée, les liaisons de coque et les carlingues de fond doivent être échantillonnées pour supporter le poids accru des parcs de batteries sans déformation.</li>
-            <li><strong>Isolation des chocs mécaniques :</strong> L'intégration mécanique des berceaux de batteries doit amortir les vibrations et les chocs verticaux violents liés à la mise sur l'estrin, afin de prévenir les courts-circuits internes des cellules lithium (exigence de l'inspection de sécurité).</li>
+            <li><strong>Renfort structurel de quille :</strong> Les liaisons de coque et les varangues de fond doivent être échantillonnées pour supporter la charge ponctuelle lourde des batteries lors de la mise sur estrin.</li>
+            <li><strong>Amortissement mécanique :</strong> L'intégration des berceaux de batteries doit isoler les cellules des chocs verticaux secs subis lors de l'échouage régulier.</li>
         </ul>
 
-        <h4>4. Motorisation &amp; Sécurité Électrique</h4>
+        <h4>5. Motorisation &amp; Sécurité Électrique</h4>
         <ul>
-            <li><strong>Norme Moteur :</strong> Moteurs de propulsion certifiés selon la série <span class="badge">CEI 60034</span> (machines électriques tournantes).</li>
-            <li><strong>Contrôleur Permanent d'Isolement (CPI) :</strong> Obligation d'un réseau à neutre isolé de la coque avec surveillance continue. Toute perte d'isolement doit immédiatement lever une alarme visuelle et sonore en passerelle pour prévenir le risque d'électrolyse destructrice sur les coques alu.</li>
+            <li><strong>Norme Moteur :</strong> Conforme à la série <span class="badge">CEI 60034</span>.</li>
+            <li><strong>Contrôleur Permanent d'Isolement (CPI) :</strong> Obligatoire. Le réseau ne doit pas être mis à la masse de la coque pour supprimer tout risque d'électrolyse (corrosion accélérée de l'aluminium).</li>
         </ul>
     </div>
 
     <div class="links-box">
         <h4>📂 Liens officiels vers la réglementation d'origine (Gouvernement Français)</h4>
         <ul>
-            <li><span class="badge-blue">Légifrance</span> : <a class="btn-link" href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000313605/" target="_blank">Arrêté du 23 novembre 1987 (Règlement général de sécurité)</a></li>
+            <li><span class="badge-blue">Légifrance</span> : <a class="btn-link" href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000313605/" target="_blank">Arrêté du 23 novembre 1987 (Règlement général)</a></li>
             <li><span class="badge-blue">Ministère de la Mer</span> : <a class="btn-link" href="https://www.mer.gouv.fr/sites/default/files/2020-11/Division_223b_0.pdf" target="_blank">Télécharger le texte d'origine de la Division 223b (PDF)</a></li>
             <li><span class="badge-blue">Ministère de la Mer</span> : <a class="btn-link" href="https://www.mer.gouv.fr/sites/default/files/2020-11/Division_219.pdf" target="_blank">Télécharger le texte d'origine de la Division 219 - Systèmes Électriques (PDF)</a></li>
         </ul>
@@ -284,12 +357,19 @@
         const passagers = parseInt(document.getElementById('passagers').value) || 0;
         const coque = document.getElementById('coque').value;
         const propulsion = document.getElementById('propulsion').value;
+        
+        // Nouveaux paramètres électriques
+        const puissanceMoteur = parseFloat(document.getElementById('puissance-moteur').value) || 0;
+        const autonomie = parseFloat(document.getElementById('autonomie').value) || 0;
 
         const titre = document.getElementById('div-titre');
         const desc = document.getElementById('div-desc');
         const groupPassagers = document.getElementById('group-passagers');
         const blocElectrique = document.getElementById('bloc-electrique');
+        const blocCalculateur = document.getElementById('bloc-calculateur-batterie');
+        const alerteStabilite = document.getElementById('alerte-stabilite');
 
+        // Afficher/Masquer le champ passager selon l'activité
         if (usage === 'passagers') {
             groupPassagers.style.opacity = "1";
             groupPassagers.style.pointerEvents = "auto";
@@ -298,13 +378,47 @@
             groupPassagers.style.pointerEvents = "none";
         }
 
+        // Gestion de l'affichage des blocs électriques
         if (propulsion === 'electrique') {
             blocElectrique.style.display = "block";
+            blocCalculateur.style.display = "grid";
+            
+            // --- LOGIQUE DE CALCUL DU POIDS ET DE LA CAPACITÉ ---
+            // On calcule l'énergie nette consommée (Puissance x Temps)
+            // On ajoute une marge de décharge/sécurité de 20% (multiplié par 1.2)
+            const capaciteKwh = Math.round((puissanceMoteur * autonomie) * 1.2);
+            // Densité énergétique LFP marine moyenne de sécurité = 100 Wh/kg (soit 10 kg par kWh)
+            const poidsKg = capaciteKwh * 10;
+
+            document.getElementById('res-capacite').innerText = capaciteKwh + " kWh";
+            document.getElementById('res-poids').innerText = poidsKg.toLocaleString() + " kg (" + (poidsKg/1000).toFixed(2) + " t)";
+
+            // --- ANALYSE DE LA STABILITÉ (CRITÈRES ALERTE) ---
+            // Seuil empirique de sécurité : Le poids de la batterie ne doit pas excéder un certain ratio de la taille du navire
+            // Exemple : Pour 15m, si batterie > 2.5 tonnes -> Alerte Division 211
+            let seuilCritiqueTonnes = 1.0; 
+            if (longueur <= 12) seuilCritiqueTonnes = 1.2;
+            else if (longueur <= 16) seuilCritiqueTonnes = 2.5;
+            else if (longueur <= 20) seuilCritiqueTonnes = 4.5;
+            else if (longueur <= 24) seuilCritiqueTonnes = 7.0;
+            else seuilCritiqueTonnes = 12.0;
+
+            const poidsTonnes = poidsKg / 1000;
+
+            if (poidsTonnes > seuilCritiqueTonnes && usage === 'passagers' && coque === 'autre') {
+                alerteStabilite.style.display = "block";
+                alerteStabilite.innerHTML = "<strong>⚠️ Alerte Division 211 (Stabilité critique) :</strong> Le poids estimé du parc de batteries (" + poidsTonnes.toFixed(2) + " t) est trop élevé pour un navire en " + (longueur) + "m de type composite/alu. Une étude de stabilité approfondie (test d'inclinaison, pesée de coque) menée par un cabinet d'architecture navale agréé sera exigée par le CSN pour obtenir le permis de navigation.";
+            } else {
+                alerteStabilite.style.display = "none";
+            }
+
         } else {
             blocElectrique.style.display = "none";
+            blocCalculateur.style.display = "none";
+            alerteStabilite.style.display = "none";
         }
 
-        // Logique simplifiée arbre
+        // Logique de calcul des divisions
         if (usage === 'peche') {
             titre.innerText = longueur < 12 ? "Division 227" : "Division 226/228";
             desc.innerText = "Réglementation relative aux navires de pêche professionnelle.";
@@ -322,6 +436,8 @@
                 titre.innerText = "Erreur (Max 12 passagers)";
                 desc.innerText = "Pour 12 passagers ou moins, l'homologation requise est la Division 241 (NUC) et non Navire à Passagers.";
                 blocElectrique.style.display = "none";
+                blocCalculateur.style.display = "none";
+                alerteStabilite.style.display = "none";
                 return;
             }
             if (zone === 'internationale') {
@@ -338,7 +454,7 @@
                     } else {
                         if (propulsion === 'electrique') {
                             titre.innerText = "Division 223b, 219-6 & 322";
-                            desc.innerText = "Navire à passagers national (< 24m, coque alu/composite/bois). Soumis de plein droit aux contraintes croisées de la Division 223b (structure), la Division 219 (stockage d'énergie lithium) et la Division 322 (systèmes d'extinction d'incendie fixes).";
+                            desc.innerText = "Navire à passagers national (< 24m, coque alu/composite/bois). Soumis aux contraintes de la Division 223b (structure), la Division 219-6 (Lithium) et la Division 322 (incendie).";
                         } else {
                             titre.innerText = "Division 223b";
                             desc.innerText = "Navire à passagers national de moins de 24 mètres en matériaux autres que l'acier.";
