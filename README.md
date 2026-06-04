@@ -229,6 +229,7 @@
     <p>Configurez les caractéristiques du navire pour identifier les règles de sécurité, les obligations d'estrin et l'impact du poids des batteries.</p>
     
     <div class="grid">
+        <!-- Usage -->
         <div class="form-group">
             <label for="usage">Usage / Activité principale</label>
             <select id="usage" onchange="calculerDivision()">
@@ -240,6 +241,7 @@
             </select>
         </div>
 
+        <!-- Zone de Navigation -->
         <div class="form-group">
             <label for="zone">Zone de navigation</label>
             <select id="zone" onchange="calculerDivision()">
@@ -248,6 +250,7 @@
             </select>
         </div>
 
+        <!-- Longueur -->
         <div class="form-group">
             <label for="longueur">Longueur du navire : <span id="longueur-val">15</span> m</label>
             <div class="slider-container">
@@ -255,11 +258,13 @@
             </div>
         </div>
 
+        <!-- Nombre de passagers -->
         <div class="form-group" id="group-passagers">
             <label for="passagers">Nombre de passagers à bord</label>
             <input type="number" id="passagers" value="25" min="0" oninput="calculerDivision()">
         </div>
 
+        <!-- Matériau de la coque -->
         <div class="form-group">
             <label for="coque">Matériau de la coque</label>
             <select id="coque" onchange="calculerDivision()">
@@ -268,6 +273,7 @@
             </select>
         </div>
 
+        <!-- Propulsion Électrique -->
         <div class="form-group">
             <label for="propulsion">Type de motorisation</label>
             <select id="propulsion" onchange="calculerDivision()">
@@ -276,6 +282,7 @@
             </select>
         </div>
 
+        <!-- BLOC DE CALCUL DE CAPACITÉ -->
         <div class="sub-grid" id="bloc-calculateur-batterie" style="display: none;">
             <h4>📐 Dimensionnement Électrique Estimatif (Standard LFP Marine : 100 Wh/kg)</h4>
             <div class="form-group">
@@ -289,15 +296,18 @@
         </div>
     </div>
 
+    <!-- Alerte Stabilité Critique (Division 211) -->
     <div class="alert-stability" id="alerte-stabilite">
         ⚠️ Alerte Stabilité Critique !
     </div>
 
+    <!-- Cadre de résultat principal -->
     <div class="result-box">
         <div class="result-title" id="div-titre">Division --</div>
         <p class="result-text" id="div-desc">Sélectionnez les options pour analyser le navire.</p>
     </div>
 
+    <!-- Cadre technique secondaire -->
     <div class="electric-specs" id="bloc-electrique">
         <h3>⚡ Prescriptions Techniques Critiques (Divisions 223b, 219-6 &amp; 322)</h3>
         
@@ -333,12 +343,13 @@
         </ul>
     </div>
 
+    <!-- LIENS CORRIGÉS ET STABILISÉS -->
     <div class="links-box">
-        <h4>📂 Liens officiels vers la réglementation d'origine (Gouvernement Français)</h4>
+        <h4>📂 Portails Officiels d'Accès à la Réglementation (Gouvernement Français)</h4>
+        <p style="font-size: 0.9rem; margin-bottom: 15px; color: #475569;"><em>Note pour le client : Les URL des fichiers PDF individuels étant régulièrement modifiées par l'administration, utilisez les portails permanents ci-dessous pour télécharger les dernières versions à jour.</em></p>
         <ul>
-            <li><span class="badge-blue">Légifrance</span> : <a class="btn-link" href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000313605/" target="_blank">Arrêté du 23 novembre 1987 (Règlement général)</a></li>
-            <li><span class="badge-blue">Ministère de la Mer</span> : <a class="btn-link" href="https://www.mer.gouv.fr/sites/default/files/2020-11/Division_223b_0.pdf" target="_blank">Télécharger le texte d'origine de la Division 223b (PDF)</a></li>
-            <li><span class="badge-blue">Ministère de la Mer</span> : <a class="btn-link" href="https://www.mer.gouv.fr/sites/default/files/2020-11/Division_219.pdf" target="_blank">Télécharger le texte d'origine de la Division 219 - Systèmes Électriques (PDF)</a></li>
+            <li><span class="badge-blue">Légifrance</span> : <a class="btn-link" href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000313605/" target="_blank">Arrêté du 23 novembre 1987 (Texte cadre consolidé)</a></li>
+            <li><span class="badge-blue">Secrétariat à la Mer</span> : <a class="btn-link" href="https://www.mer.gouv.fr/reglementation-de-securite-des-navires-arrete-du-23-novembre-1987-modifie" target="_blank">Portail de téléchargement officiel de toutes les Divisions (223b, 219, 322, 211...)</a></li>
         </ul>
     </div>
 </div>
@@ -379,15 +390,12 @@
             blocElectrique.style.display = "block";
             blocCalculateur.style.display = "grid";
             
-            // Calcul basé sur l'efficacité technologique standard LFP marine (80% DoD max)
             const capaciteKwh = Math.round((puissanceMoteur * autonomie) * 1.2);
-            // Ratio générique intégrant l'environnement de sécurité marine : 10 kg / kWh
             const poidsKg = capaciteKwh * 10;
 
             document.getElementById('res-capacite').innerText = capaciteKwh + " kWh";
             document.getElementById('res-poids').innerText = poidsKg.toLocaleString() + " kg (" + (poidsKg/1000).toFixed(2) + " t)";
 
-            // Seuils de déclenchement d'alarme de stabilité (Division 211)
             let seuilCritiqueTonnes = 1.0; 
             if (longueur <= 12) seuilCritiqueTonnes = 1.2;
             else if (longueur <= 16) seuilCritiqueTonnes = 2.5;
@@ -410,7 +418,6 @@
             alerteStabilite.style.display = "none";
         }
 
-        // Moteur logique des divisions
         if (usage === 'peche') {
             titre.innerText = longueur < 12 ? "Division 227" : "Division 226/228";
             desc.innerText = "Réglementation relative aux navires de pêche professionnelle.";
